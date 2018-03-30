@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["nicholasutikal@gmail.com"]
 
   spec.summary       = %q{A gem to perform currency conversion and arithmetics with different currenciesS}
-  spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.homepage      = "https://github.com/nichohelmut/currency_converter_gem"
   spec.license       = "MIT"
 
 
