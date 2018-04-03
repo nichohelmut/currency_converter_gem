@@ -64,4 +64,3 @@ def initialize(amount, curr)
   end
 end
 
-end
