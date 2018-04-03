@@ -1,86 +1,67 @@
 require "currency_converter_gem_nichohelmut/version"
 
 module CurrencyConverterGemNichohelmut
-class Money
-    attr_accessor :amount, :converted_amount
+def initialize(amount, curr)
+    @amount = amount
+    @curr = curr
+  end
 
-    def initialize(amount, from_curr)
-      @amount = amount
-      @from_curr = from_curr
+  def self.conversion_rates(fx = {})
+    {'EUR'=>{'USD'=>1.2, 'Bitcoin'=>0.0047},
+    'USD'=>{'EUR'=>0.8, 'Bitcoin'=>0.0097},
+    'Bitcoin'=>{'USD'=>1.11, 'EUR'=>0.0047}}
+  end
+
+  def amount
+    @amount
+  end
+
+  def curr
+    @curr
+  end
+
+  def inspect
+    '%.2f' % @amount.to_s + " " + @curr
+  end
+
+  def convert_to(to_curr)
+    if to_curr != self.curr
+      @rate = Money.conversion_rates[self.curr][to_curr]
+      Money.new(@amount * @rate, to_curr)
+    else
+      Money.new(@amount, curr)
     end
+  end
 
-    def amount
-      @amount
-    end
-
-    def from_curr
-      @from_curr
-    end
-
-    def inspect
-      '%.2f' % @amount.to_s + " " + @from_curr
-    end
-
-
- def self.conversion_rates(attr = {})
-      # @conv_rates = {from_curr = {rates}} Use Hard Code for now
-      # refactor to attr ={}
-      return {'EUR'=>{'USD'=>1.23, 'Bitcoin'=>0.00016},
-      'USD'=>{'EUR'=>0.81, 'Bitcoin'=>0.00013},
-      'Bitcoin'=>{'USD'=>7468.23, 'EUR'=>6557.93}}
-
-
-    end
-
-    def convert_to(to_curr)
-      if to_curr != self.from_curr
-        @rate = Money.conversion_rates[self.from_curr]["#{to_curr}"]
-        @converted_amount = @amount * @rate
-        Money.new(@converted_amount, to_curr)
-      else
-        Money.new(@amount, from_curr)
-      end
-    end
+# --------------------------------------
 
   def +(other)
-    curr = self.from_curr
-    result = self.amount + other.convert_to(curr).amount
-    return Money.new(result, curr)
+    Money.new(self.amount + other.convert_to(self.curr).amount, self.curr)
   end
 
   def -(other)
-    curr = self.from_curr
-    result = self.amount - other.convert_to(curr).amount
-    return Money.new(result, curr)
+    Money.new(self.amount - other.convert_to(self.curr).amount, self.curr)
   end
 
   def *(other)
-    result = self.amount * other
-    Money.new(result, self.from_curr)
+    Money.new(self.amount * other, self.curr)
   end
 
   def /(other)
-    result = self.amount / other
-    Money.new(result, self.from_curr)
+    Money.new(self.amount / other, self.curr)
   end
 
- def ==(other)
-    curr = self.from_curr
-    result = (self.amount == other.convert_to(curr).amount)
+  def ==(other)
+    self.amount == other.convert_to(self.curr).amount
   end
 
   def >(other)
-    curr = self.from_curr
-    self.amount > other.convert_to(curr).amount
+    self.amount > other.convert_to(self.curr).amount
   end
 
   def <(other)
-    curr = self.from_curr
-    self.amount < other.convert_to(curr).amount
+    self.amount < other.convert_to(self.curr).amount
   end
 end
-
-twenty_dollars = Money.new(20, "USD")
-fifty_euro = Money.new(50, "EUR")
 
 end
